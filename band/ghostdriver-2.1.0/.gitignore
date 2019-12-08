@@ -1,0 +1,24 @@
+.DS_Store
+*.xcodeproj
+Makefile*
+*~
+.idea
+*.iml
+target/
+build
+*.log
+.gradle
+*.ipr
+*.iws
+*.class
+*.orig
+*.pyc
+
+# vim temp files
+*.swp
+
+# eclipse files
+.settings
+.classpath
+.project
+
