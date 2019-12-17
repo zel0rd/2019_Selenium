@@ -59,7 +59,7 @@ current_path = os.getcwd()
 print(current_path)
 # driver_path = current_path + '\chromedriver.exe'
 # driver_path = current_path + "/chromedriver_78.3904.105_mac"
-driver_path = current_path + '\..\driver\chromedriver.exe'
+driver_path = current_path + '\driver\chromedriver.exe'
 
 print(driver_path)
 

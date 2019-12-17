@@ -1,0 +1,200 @@
+/*
+This file is part of the GhostDriver by Ivan De Marino <http://ivandemarino.me>.
+
+Copyright (c) 2012-2014, Ivan De Marino <http://ivandemarino.me>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+    * Redistributions of source code must retain the above copyright notice,
+      this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright notice,
+      this list of conditions and the following disclaimer in the documentation
+      and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+apply plugin: "java"
+apply plugin: "idea"
+apply plugin: "eclipse"
+apply plugin: "maven"
+
+group "com.github.detro"
+
+task wrapper(type: Wrapper) {
+    gradleVersion   = "2.5"
+    jarFile         = "gradle/gradle-wrapper.jar"
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven { url "https://jitpack.io" }
+}
+
+compileJava {
+    options.compilerArgs.add("-Xlint:unchecked")
+    options.compilerArgs.add("-Xlint:deprecation")
+}
+
+ext.seleniumVersion         = "3.1.0"
+project.archivesBaseName    = project.name
+project.version             = "2.1.0"
+
+ext.projectGroupId          = "com.github.detro"
+ext.projectArtifactId       = "phantomjsdriver"
+ext.projectLongName         = "PhantomJS Driver (GhostDriver)"
+ext.projectArtefactDir      = "jars/"
+ext.projectMainClass        = "org.openqa.selenium.phantomjs.PhantomJSDriver"
+ext.projectCreator          = "Ivan De Marino (https://github.com/detro)"
+
+
+dependencies {
+    compile "org.seleniumhq.selenium:selenium-remote-driver:$seleniumVersion"
+}
+
+// Forces Java 8 compile source/target
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+tasks.withType(JavaExec) {
+    classpath = configurations.compile + sourceSets.test.output
+    args project.hasProperty("args") ? project.args.split("\\s") : []
+}
+
+// Binary Jar
+jar {
+    destinationDir      = file(projectArtefactDir)
+    version             = project.version
+    manifest {
+        attributes(
+            "Implementation-Title"      : projectLongName,
+            "Implementation-Version"    : project.version,
+            "Gradle-Version"            : project.gradle.gradleVersion,
+            "Created-By"                : projectCreator
+        )
+    }
+}
+
+// Source Jar
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier = "sources"
+    from sourceSets.main.allSource
+
+    destinationDir      = file(projectArtefactDir)
+    version             = project.version
+    manifest {
+        attributes(
+            "Implementation-Title"      : projectLongName,
+            "Implementation-Version"    : project.version,
+            "Gradle-Version"            : project.gradle.gradleVersion,
+            "Created-By"                : projectCreator
+        )
+    }
+}
+
+// JavaDoc Jar
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = "javadoc"
+    from javadoc.destinationDir
+
+    destinationDir      = file(projectArtefactDir)
+    version             = project.version
+    manifest {
+        attributes(
+            "Implementation-Title"      : projectLongName,
+            "Implementation-Version"    : project.version,
+            "Gradle-Version"            : project.gradle.gradleVersion,
+            "Created-By"                : projectCreator
+        )
+    }
+}
+
+// Make all Jars
+task jars {
+    dependsOn jar, sourceJar, javadocJar
+}
+
+// Store JavaDoc
+task storeJavadoc(type: Sync, dependsOn: javadoc) {
+    from project.docsDir
+    into "docs"
+}
+
+// Artifact-making Tasks
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourceJar
+}
+
+// To specify a license in the pom:
+install {
+  repositories.mavenInstaller {
+    pom.project {
+        name            "PhantomJSDriver"
+        description     """
+        PhantomJSDriver is a Java binding for the PhantomJS WebDriver, GhostDriver.
+        The binding is developed within the GhostDriver project, and distributed through public Maven repository
+        and Selenium official .zip package.
+        """
+        groupId         projectGroupId
+        artifactId      projectArtifactId
+        version         project.version
+        packaging       "jar"
+        url             "https://github.com/detro/ghostdriver"
+        inceptionYear   "2012"
+
+        scm {
+            url                     "https://github.com/detro/ghostdriver"
+            connection              "scm:git:git@github.com:detro/ghostdriver.git"
+            developerConnection     "scm:git:git@github.com:detro/ghostdriver.git"
+        }
+
+      licenses {
+        license {
+            name            "The BSD 2-Clause License"
+            url             "http://opensource.org/licenses/BSD-2-Clause"
+            distribution    "repo"
+        }
+      }
+
+      developers {
+        developer {
+            id          "detro"
+            name        "Ivan De Marino"
+            email       "detronizator@gmail.com"
+            url         "http://ivandemarino.me"
+            roles {
+                role    "Owner"
+                role    "Developer"
+            }
+            timezone    "GMT"
+        }
+        developer {
+            id          "jesg"
+            name        "Jason Gowan"
+            email       "gowanjason@gmail.com"
+            url         "http://github.com/jesg"
+            roles {
+              role    "Developer"
+            }
+            timezone    "America/Los_Angeles"
+        }
+      }
+    }
+  }
+}

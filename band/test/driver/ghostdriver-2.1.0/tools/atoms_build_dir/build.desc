@@ -1,0 +1,111 @@
+# This file is part of the GhostDriver by Ivan De Marino <http://ivandemarino.me>.
+#
+# Copyright (c) 2012-2014, Ivan De Marino <http://ivandemarino.me>
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#     * Redistributions of source code must retain the above copyright notice,
+#       this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright notice,
+#       this list of conditions and the following disclaimer in the documentation
+#       and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+# ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# Builds all the atoms that will later be imported in GhostDriver
+#
+# Here we have a mix of:
+#
+#    * Atoms from the default WebDriver Atoms directory
+#    * Atoms that were not exposed by the default build configuration of Selenium
+#    * Atoms purposely built for GhostDriver, still based on the default WebDriver Atoms
+#
+
+js_library(name = "chrome-deps",
+  deps = [ "//javascript/chrome-driver:get_first_client_rect:chrome",
+           "//javascript/chrome-driver:get_location_in_view:chrome",
+           "//javascript/chrome-driver:get_page_zoom:chrome",
+           "//javascript/chrome-driver:is_element_clickable:chrome" ])
+
+js_library(name = "deps",
+  srcs = [ "*.js" ],
+  deps = [ "//javascript/atoms:all_js",
+           ":chrome-deps",
+           "//javascript/webdriver/atoms:all_js" ])
+
+# Atoms created specifically for GhostDriver
+js_fragment(name = "scroll_into_view",
+  module = "phantomjs.atoms.inject.action",
+  function = "phantomjs.atoms.inject.action.scrollIntoView",
+  deps = [ ":deps" ])
+
+js_fragment(name = "is_file_input",
+  module = "phantomjs.atoms.inject.action",
+  function = "phantomjs.atoms.inject.action.isFileInput",
+  deps = [ ":deps" ])
+
+js_fragment(name = "is_content_editable",
+  module = "phantomjs.atoms.inject.action",
+  function = "phantomjs.atoms.inject.action.isContentEditable",
+  deps = [ ":deps" ])
+
+js_fragment(name = "get_name",
+  module = "phantomjs.atoms.inject.action",
+  function = "phantomjs.atoms.inject.action.getName",
+  deps = [ ":deps" ])
+
+js_fragment(name = "get_location",
+  module = "phantomjs.atoms.inject.action",
+  function = "phantomjs.atoms.inject.action.getLocation",
+  deps = [ ":deps" ])
+
+js_fragment(name = "get_location_in_view",
+  module = "phantomjs.atoms.inject.action",
+  function = "phantomjs.atoms.inject.action.getLocationInView",
+  deps = [ ":deps" ])
+
+js_fragment(name = "frame_name",
+  module = "phantomjs.atoms.inject.action",
+  function = "phantomjs.atoms.inject.action.frameName",
+  deps = [ ":deps" ])
+
+# List of Atoms that will be compiled for GhostDriver
+js_library(name = "build_atoms",
+  deps = [
+    ":scroll_into_view",
+    ":is_file_input",
+    ":is_content_editable",
+    ":get_name",
+    ":get_location",
+    ":get_location_in_view",
+    ":frame_name",
+
+    "//javascript/atoms/fragments:execute_script",
+    "//javascript/atoms/fragments:execute_async_script",
+
+    "//javascript/webdriver/atoms/fragments/inject:type",
+    "//javascript/webdriver/atoms/fragments/inject:active_element",
+    "//javascript/webdriver/atoms/fragments/inject:submit",
+    "//javascript/webdriver/atoms/fragments/inject:clear",
+    "//javascript/webdriver/atoms/fragments/inject:click",
+    "//javascript/webdriver/atoms/fragments/inject:is_selected",
+    "//javascript/webdriver/atoms/fragments/inject:is_enabled",
+    "//javascript/webdriver/atoms/fragments/inject:is_displayed",
+    "//javascript/webdriver/atoms/fragments/inject:get_value_of_css_property",
+    "//javascript/webdriver/atoms/fragments/inject:get_text",
+    "//javascript/webdriver/atoms/fragments/inject:get_size",
+    "//javascript/webdriver/atoms/fragments/inject:get_attribute_value",
+    "//javascript/webdriver/atoms/fragments/inject:find_element",
+    "//javascript/webdriver/atoms/fragments/inject:find_elements"
+  ])
