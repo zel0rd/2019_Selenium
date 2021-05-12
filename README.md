@@ -1,6 +1,6 @@
 # Youtuber_crawler
 
-
+![](./img/youtube_crawler.gif)
 사용방법
 1. requests, beautifulsoup, selenium, pytube 4가지의 라이브러리가 필요합니다
 2. DRIVER_DIR="" 에 크롬웹드라이버의 위치 경로를 입력해줍니다.
