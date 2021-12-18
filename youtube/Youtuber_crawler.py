@@ -49,5 +49,5 @@ while pagedowns < 100:
 links = get_links()
 
 for link in links:
-    YouTube(link).streams.first().download()
+    YouTube(link).streams.filter(progressive=True)[-1].download()
     print("Download complete " + str(links.index(link) + 1) + "/" + str(len(links)) )
