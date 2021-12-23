@@ -12,8 +12,8 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from pytube import YouTube
 
-url = ''
-DRIVER_DIR= ''
+url = 'https://www.youtube.com/user/TOSSservice/videos'
+DRIVER_DIR= './chromedriver.exe'
 
 def get_links():
 #    req = requests.get(url)
