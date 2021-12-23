@@ -2,3 +2,8 @@
 Chrome_Driver/chromedriver
 Youtube/*.mp4
 Youtube/*.exe
+Youtube/toss/
+
+imax/.ipynb_checkpoints/
+imax/Untitled.ipynb
+imax/chromedriver.exe
